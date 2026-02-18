@@ -1,42 +1,30 @@
-package org.example.database;
+static {
+    try {
+        String host = System.getenv("MYSQLHOST");
+        String port = System.getenv("MYSQLPORT");
+        String db   = System.getenv("MYSQLDATABASE");
+        String user = System.getenv("MYSQLUSER");
+        String pass = System.getenv("MYSQLPASSWORD");
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+        String jdbcUrl = "jdbc:mysql://" + host + ":" + port + "/" + db +
+                "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(jdbcUrl);
+        config.setUsername(user);
+        config.setPassword(pass);
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
-public class DataBaseConfig {
-    private static HikariDataSource dataSource;
+        config.setMaximumPoolSize(5);
+        config.setMinimumIdle(2);
+        config.setIdleTimeout(30000);
+        config.setConnectionTimeout(30000);
 
-    // Initialize once during class loading
-    static {
-        try {
-            HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(System.getenv("MYSQL_URL"));
-            config.setUsername(System.getenv("MYSQLUSER"));
-            config.setPassword(System.getenv("MYSQLPASSWORD"));
-            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource = new HikariDataSource(config);
 
-            config.setMaximumPoolSize(5);      //Maximum concurrent connections
-            config.setMinimumIdle(2);  // free connections available initially
-            config.setIdleTimeout(30000);        // 30 seconds
-            config.setConnectionTimeout(30000);  // 30 seconds
+        System.out.println("✅ HikariCP connected to Railway MySQL");
 
-            dataSource = new HikariDataSource(config);
-        } catch (Exception e) {
-            System.err.println("❌ Failed to initialize HikariCP: " + e.getMessage());
-        }
-    }
-
-    // Public method to get connection
-    public static Connection createConnection() throws SQLException {
-        return dataSource.getConnection();
-    }
-
-    // Optional: expose DataSource if needed
-    public static DataSource getDataSource() {
-        return dataSource;
+    } catch (Exception e) {
+        System.err.println("❌ Failed to initialize HikariCP: " + e.getMessage());
     }
 }
