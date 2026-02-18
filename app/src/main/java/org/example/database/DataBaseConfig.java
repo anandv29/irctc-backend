@@ -14,9 +14,9 @@ public class DataBaseConfig {
     static {
         try {
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(System.getenv("DATABASE_URL"));
-            config.setUsername(System.getenv("DATABASE_USERNAME"));
-            config.setPassword(System.getenv("DATABASE_PASSWORD"));
+            config.setJdbcUrl(System.getenv("MYSQL_URL"));
+            config.setUsername(System.getenv("MYSQLUSER"));
+            config.setPassword(System.getenv("MYSQLPASSWORD"));
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
             config.setMaximumPoolSize(5);      //Maximum concurrent connections
